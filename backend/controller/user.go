@@ -2,138 +2,151 @@ package controller
 
 import (
 	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/asaskevich/govalidator"
 	"github.com/Panadsada/523480Project/entity"
-
 )
 
-// POST /users
-
+// POST /user
 func CreateUser(c *gin.Context) {
 
+	var gender entity.Gender
 	var user entity.User
+	var title entity.Title
 
+	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร user
 	if err := c.ShouldBindJSON(&user); err != nil {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		   return
-
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-
-
-	if err := entity.DB().Create(&user).Error; err != nil {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		   return
-
+	// 10: ค้นหา gender ด้วย id
+	if tx := entity.DB().Where("id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gender not found"})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	
+	// 11: ค้นหา title ด้วย id
+	if tx := entity.DB().Where("id = ?", user.TitleID).First(&title); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "title not found"})
+		return
+	}
 
+	// 12: สร้าง user
+	dt := entity.User{
+		Role:  		 user.Role,
+		Gender:       gender, // โยงความสัมพันธ์กับ Entity gender
+		Title:        title,  // โยงความสัมพันธ์กับ Entity title
+		Name:         user.Name,	
+		Password: 	  user.Password,
+		Personal:     user.Personal,
+		Email:        user.Email,
+		Tel:          user.Tel,
+		Address:      user.Address,
+		BirthdayTime: user.BirthdayTime,
+	}
+
+	// ขั้นตอนการ validate ที่นำมาจาก unit test
+	if _, err := govalidator.ValidateStruct(dt); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 13: บันทึก
+	if err := entity.DB().Create(&dt).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": dt})
 }
 
 // GET /user/:id
-
 func GetUser(c *gin.Context) {
-
 	var user entity.User
-
 	id := c.Param("id")
-
-	if err := entity.DB().Raw("SELECT * FROM users WHERE id = ?", id).Scan(&user).Error; err != nil {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		   return
-
+	if err := entity.DB().Preload("Gender").Preload("Title").Raw("SELECT * FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
 
 
+// GET /user /s
+func ListUsers(c *gin.Context) {
+	var user []entity.User
+	if err := entity.DB().Preload("Gender").Preload("Title").Raw("SELECT * FROM users").Find(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
-
 }
 
-// GET /users
-
-func ListUsers(c *gin.Context) {
-
-	var users []entity.User
-
-	if err := entity.DB().Raw("SELECT * FROM users").Scan(&users).Error; err != nil {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		   return
-
+// DELETE /user/:id
+func DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+	if tx := entity.DB().Exec("DELETE FROM users WHERE id = ?", id); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
 	}
 
-
-
-	c.JSON(http.StatusOK, gin.H{"data": users})
-
+	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
-// PATCH /users
 
 func UpdateUser(c *gin.Context) {
 
+	var gender entity.Gender
 	var user entity.User
+	var title entity.Title
 
+	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร user
 	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 10: ค้นหา gender ด้วย id
+	if tx := entity.DB().Where("id = ?", user.GenderID).First(&gender); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "gender not found"})
+		return
+	}
 
-		   return
+	
+	// 11: ค้นหา title ด้วย id
+	if tx := entity.DB().Where("id = ?", user.TitleID).First(&title); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "title not found"})
+		return
+	}
 
+	// 12: สร้าง user
+	update := entity.User{
+		Role:  		 user.Role,
+		Gender:       gender, // โยงความสัมพันธ์กับ Entity gender
+		Title:        title,  // โยงความสัมพันธ์กับ Entity title
+		Name:         user.Name,	
+		Password: 	  user.Password,
+		Personal:     user.Personal,
+		Email:        user.Email,
+		Tel:          user.Tel,
+		Address:      user.Address,
+		BirthdayTime: user.BirthdayTime,
 	}
 
 
-
-	if tx := entity.DB().Where("id = ?", user.ID).First(&user); tx.RowsAffected == 0 {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
-
-		   return
-
+	// ขั้นตอนการ validate ที่นำมาจาก unit test
+	if _, err := govalidator.ValidateStruct(update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-
-
-	if err := entity.DB().Save(&user).Error; err != nil {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		   return
-
+	// update
+	if err := entity.DB().Where("id = ?", user.ID).Updates(&update).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-
-
-
-	c.JSON(http.StatusOK, gin.H{"data": user})
-
-}
-
-// DELETE /users/:id
-
-func DeleteUser(c *gin.Context) {
-
-	id := c.Param("id")
-
-	if tx := entity.DB().Exec("DELETE FROM users WHERE id = ?", id); tx.RowsAffected == 0 {
-
-		   c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
-
-		   return
-
-	}
-
-
-
-	c.JSON(http.StatusOK, gin.H{"data": id})
-
+	c.JSON(http.StatusOK, gin.H{"data": update})
+	
 }

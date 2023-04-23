@@ -14,6 +14,7 @@ func CreateSell(c *gin.Context) {
 	var sell entity.Sell
 	var drug entity.Drug
 	
+	
 
 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร sell
 	if err := c.ShouldBindJSON(&sell); err != nil {
@@ -31,7 +32,11 @@ func CreateSell(c *gin.Context) {
 	// 10: สร้าง sell
 	pm := entity.Sell{
 		Drug:		drug,					// โยงความสัมพันธ์กับ Entity drug
-		
+		Quantity:   sell.Quantity,
+		Cost:		sell.Cost,	
+		Type:		sell.Type,
+		Payment:	sell.Payment,
+		Status:		sell.Status,
 	}
 
 	// ขั้นตอนการ validate ที่นำมาจาก drug test
@@ -81,23 +86,45 @@ func DeleteSell(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
-// PATCH /sells
-func UpdateSell(c *gin.Context) {
+func UpdatSell(c *gin.Context) {
+
+	var drug entity.Drug
 	var sell entity.Sell
-	if err := c.ShouldBindJSON(&sell); err != nil {
+
+	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 8 จะถูก bind เข้าตัวแปร drug
+	if err := c.ShouldBindJSON(&drug); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", sell.ID).First(&sell); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "sell not found"})
+	// 9: ค้นหา drug ด้วย id
+	if tx := entity.DB().Where("id = ?", sell.DrugID).First(&drug); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "drug not found"})
 		return
 	}
 
-	if err := entity.DB().Save(&sell).Error; err != nil {
+	// 12: สร้าง drug
+	update := entity.Sell{
+		Drug:		drug,					// โยงความสัมพันธ์กับ Entity drug
+		Quantity:   sell.Quantity,
+		Cost:		sell.Cost,	
+		Type:		sell.Type,
+		Payment:	sell.Payment,
+		Status:		sell.Status,
+	}
+
+
+	// ขั้นตอนการ validate ที่นำมาจาก sell test
+	if _, err := govalidator.ValidateStruct(update); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": sell})
+	// update
+	if err := entity.DB().Where("id = ?", drug.ID).Updates(&update).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": update})
+	
 }

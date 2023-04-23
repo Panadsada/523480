@@ -55,4 +55,46 @@ func SetupDatabase() {
 	db.Raw("SELECT * FROM users WHERE email = ?", "panadda@gmail.com").Scan(&panadda)
 	db.Raw("SELECT * FROM admins WHERE email = ?", "abc@gmail.com").Scan(&abc)
 
+	//---Title Data
+	Mr := Title{
+		Name: "นาย",
+	}
+	db.Model(&Title{}).Create(&Mr)
+
+	Mrs := Title{
+		Name: "นาง",
+	}
+	db.Model(&Title{}).Create(&Mrs)
+
+	Miss := Title{
+		Name: "นางสาว",
+	}
+	db.Model(&Title{}).Create(&Miss)
+
+	//---Gender Data
+	Male := Gender{
+		Name: "ชาย",
+	}
+	db.Model(&Gender{}).Create(&Male)
+
+	Female := Gender{
+		Name: "หญิง",
+	}
+	db.Model(&Gender{}).Create(&Female)
+
+	//---Status Data
+	checkPayment := Status{
+		Name: "ตรวจสอบการชำระเงิน",
+	}
+	db.Model(&Status{}).Create(&checkPayment)
+
+	prepareForDelivery := Status{
+		Name: "เตรียมการจัดส่ง ",
+	}
+	db.Model(&Status{}).Create(&prepareForDelivery)
+	
+	shipped := Status{
+		Name: "จัดส่งแล้ว ",
+	}
+	db.Model(&Status{}).Create(&shipped)
 }
