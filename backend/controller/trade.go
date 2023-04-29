@@ -55,7 +55,6 @@ func CreateTrade(c *gin.Context) {
 		QUANTITY:	trade.QUANTITY,	
 		COST:		trade.COST,
 		Total:		trade.Total,
-		Type:		trade.Type,
 		Evidence:	trade.Evidence,
 		TradeTime:	trade.TradeTime,
 	}
@@ -155,7 +154,6 @@ func UpdateTrade(c *gin.Context) {
 		QUANTITY:	trade.QUANTITY,	
 		COST:		trade.COST,
 		Total:		trade.Total,
-		Type:		trade.Type,
 		Evidence:	trade.Evidence,
 		TradeTime:	trade.TradeTime,
 	}

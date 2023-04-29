@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
+	"github.com/Panadsada/523480Project/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"github.com/Panadsada/523480Project/entity"
 )
 
 // POST /sell
@@ -34,12 +34,11 @@ func CreateSell(c *gin.Context) {
 		Drug:		drug,					// โยงความสัมพันธ์กับ Entity drug
 		Quantity:   sell.Quantity,
 		Cost:		sell.Cost,	
-		Type:		sell.Type,
 		Payment:	sell.Payment,
 		Status:		sell.Status,
 	}
 
-	// ขั้นตอนการ validate ที่นำมาจาก drug test
+	// ขั้นตอนการ validate ที่นำมาจาก sell test
 	if _, err := govalidator.ValidateStruct(pm); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -57,7 +56,7 @@ func CreateSell(c *gin.Context) {
 func GetSell(c *gin.Context) {
 	var sell entity.Sell
 	id := c.Param("id")
-	if err := entity.DB().Preload("Drug").Raw("SELECT * FROM selles WHERE id = ?", id).Find(&sell).Error; err != nil {
+	if err := entity.DB().Preload("Drug").Preload("Types").Raw("SELECT * FROM selles WHERE id = ?", id).Find(&sell).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -67,7 +66,7 @@ func GetSell(c *gin.Context) {
 // GET /sell
 func ListSells(c *gin.Context) {
 	var sell []entity.Sell
-	if err := entity.DB().Preload("Drug").Raw("SELECT * FROM sell").Find(&sell).Error; err != nil {
+	if err := entity.DB().Preload("Drug").Preload("Types").Raw("SELECT * FROM sell").Find(&sell).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -86,7 +85,7 @@ func DeleteSell(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
-func UpdatSell(c *gin.Context) {
+func UpdateSell(c *gin.Context) {
 
 	var drug entity.Drug
 	var sell entity.Sell
@@ -103,16 +102,14 @@ func UpdatSell(c *gin.Context) {
 		return
 	}
 
-	// 12: สร้าง drug
+	// 12: สร้าง sell
 	update := entity.Sell{
 		Drug:		drug,					// โยงความสัมพันธ์กับ Entity drug
 		Quantity:   sell.Quantity,
 		Cost:		sell.Cost,	
-		Type:		sell.Type,
 		Payment:	sell.Payment,
 		Status:		sell.Status,
 	}
-
 
 	// ขั้นตอนการ validate ที่นำมาจาก sell test
 	if _, err := govalidator.ValidateStruct(update); err != nil {
@@ -121,7 +118,7 @@ func UpdatSell(c *gin.Context) {
 	}
 
 	// update
-	if err := entity.DB().Where("id = ?", drug.ID).Updates(&update).Error; err != nil {
+	if err := entity.DB().Where("id = ?", sell.ID).Updates(&update).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
