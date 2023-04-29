@@ -46,18 +46,17 @@ type User struct {
 
 type Unit struct {
 	gorm.Model
-	Name string
+	Name string `valid:"required~Name cannot be blank"`
 
 	Drug []Drug `gorm:"foreignKey:UnitID"`
-	Sell []Sell `gorm:"foreignKey:UnitID"`
 }
 
 type Drug struct {
 	gorm.Model
 	Code   string `valid:"required~Code cannot be blank"`
 	Name   string `valid:"required~Name cannot be blank"`
-	Amount int
-	Price  int
+	Amount int `valid:"required~Amount cannot be blank"`
+	Price  int `valid:"required~Price cannot be blank"`
 
 	// AdminID เป็น FK
 	AdminID *uint
@@ -80,12 +79,10 @@ type Drug struct {
 
 type Sell struct {
 	gorm.Model
-	Quantity string
-	Cost     int
-	Total    int
-	Type     string
-	Payment  string
-	Status   string
+	Quantity int `valid:"required~Quantity cannot be blank"`
+	Cost     int `valid:"required~Cost cannot be blank"`
+	Total    int `valid:"required~Total cannot be blank"`
+	Payment  string `valid:"required~Payment cannot be blank"`
 	SellTime time.Time `valid:"past~SelltTime not past"`
 
 	// DrugID เป็น FK
@@ -118,10 +115,9 @@ type Sell struct {
 
 type Trade struct {
 	gorm.Model
-	QUANTITY  string
-	COST      string
-	Total     string
-	Type      string
+	QUANTITY  int `valid:"required~QUANTITY cannot be blank"`
+	COST      int `valid:"required~COST cannot be blank"`
+	Total     int `valid:"required~Total cannot be blank"`
 	Evidence  string `valid:"required~Evidence cannot be blank"`
 	TradeTime time.Time `valid:"past~TradeTime not past"`
 
@@ -145,14 +141,14 @@ type Trade struct {
 	// ข้อมูลของ Status เมื่อ join ตาราง
 	Status Status `gorm:"referenes:id" valid:"-"`
 
-
 	Sell []Sell `gorm:"foreignKey:TradeID"`
+	Sales []Sales `gorm:"foreignKey:TradeID"`
 }
 
 type Sales struct {
 	gorm.Model
-	DayTotal   int
-	MonthTotal int
+	DayTotal   int  `valid:"past~DayTotal not past"`
+	MonthTotal int  `valid:"past~MonthTotal not past"`
 
 	// AdminID เป็น FK
 	AdminID *uint
@@ -168,24 +164,25 @@ type Sales struct {
 	TradeID *uint
 	// ข้อมูลของ Trade เมื่อ join ตาราง
 	Trade Trade `gorm:"referenes:id" valid:"-"`
+
 }
 
 type Status struct {
 	gorm.Model
-	Name string
+	Name string `valid:"required~Name cannot be blank"`
 
 	Trade []Trade `gorm:"foreignKey:StatusID"`
 }
 
 type Title struct {
 	gorm.Model
-	Name string
+	Name string `valid:"required~Name cannot be blank"`
 
 	Users []User `gorm:"foreignKey:TitleID"`
 }
 type Gender struct {
 	gorm.Model
-	Name string
+	Name string `valid:"required~Name cannot be blank"`
 
 	Users []User `gorm:"foreignKey:GenderID"`
 }
