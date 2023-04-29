@@ -3,7 +3,7 @@ import {UserInterface} from "./IUser";
 import {UnitInterface} from "./IUnit";
 
 export interface DrugInterface {
-	IDdrug: 		number,
+	ID: 		number,
     Code:       string,
     Name: 		string,
 	Amount: 	number,

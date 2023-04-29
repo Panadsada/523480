@@ -5,7 +5,7 @@ import {TradeInterface} from "./ITrade";
 import {DrugInterface} from "./IDrug";
 
 export interface SellInterface {
-	IDsell: 		number,
+	ID: 		number,
     Quantity:   number,
     Cost: 		number,
 	Total: 	    number,

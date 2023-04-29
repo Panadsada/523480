@@ -1,4 +1,4 @@
 export interface UnitInterface{
-    IDunit:     number,
+    ID:     number,
     Name:   string,
 }

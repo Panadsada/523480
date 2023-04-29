@@ -3,7 +3,7 @@ import {SellInterface} from "./ISell";
 import {TradeInterface} from "./ITrade";
 
 export interface SalesInterface {
-	IDsales: 		number,
+	ID: 		number,
     DayTotal:   number,
     MonthTotal: number,
 

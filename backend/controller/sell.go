@@ -35,7 +35,7 @@ func CreateSell(c *gin.Context) {
 		Quantity:   sell.Quantity,
 		Cost:		sell.Cost,	
 		Payment:	sell.Payment,
-		Status:		sell.Status,
+		SellTime:	sell.SellTime, 
 	}
 
 	// ขั้นตอนการ validate ที่นำมาจาก sell test
@@ -108,7 +108,7 @@ func UpdateSell(c *gin.Context) {
 		Quantity:   sell.Quantity,
 		Cost:		sell.Cost,	
 		Payment:	sell.Payment,
-		Status:		sell.Status,
+		SellTime:	sell.SellTime, 
 	}
 
 	// ขั้นตอนการ validate ที่นำมาจาก sell test

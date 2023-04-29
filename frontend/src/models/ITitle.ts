@@ -1,4 +1,4 @@
 export interface TitleInterface{
-    IDtitle:     number,
+    ID:     number,
     Name:   string,
 }

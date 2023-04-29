@@ -1,5 +1,5 @@
 export interface AdminInterface {
-	IDadmin?: 		number,
+	ID?: 		number,
 	Name?: 		string,
 	Email?: 	string,
 	Password?: 	string,

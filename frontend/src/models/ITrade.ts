@@ -4,7 +4,7 @@ import {StatusInterface} from "./IStatus";
 import {DrugInterface} from "./IDrug";
 
 export interface TradeInterface {
-	IDtrade: 		number,
+	ID: 		number,
     QUANTITY:   number,
     COST: 		number,
 	Total: 	    number,

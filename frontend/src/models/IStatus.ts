@@ -1,4 +1,4 @@
 export interface StatusInterface{
-    IDstatus:     number,
+    ID:     number,
     Name:      string,
 }
