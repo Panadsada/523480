@@ -7,6 +7,28 @@ import Button from "@mui/material/Button";
 
 
   function DrugCreate(){
+    const [drugCode, setDrugCode] = useState<string>();
+    const [drugName, setDrugName] = useState<string>();
+    const [amount, setAmount] = useState<any>();
+    const [price, setPrice] = useState<any>();
+    const [drugUnit, setDrugUnit] = useState<any>();
+
+    const submit = () => {
+      console.log("SUBMIT")
+      let data = {
+        durgCode: drugCode,
+        drugName: drugName,
+        amount: amount,
+        price: price,
+        unit: drugUnit
+      }
+      console.log("DATA: ", data)
+    }
+
+    const unit =[
+      {id:1, label: "กรัม"},
+      {id:2, label: "กิโลกรัม"}
+    ]
     return(
         <Box sx={{
             backgroundImage:
@@ -57,7 +79,7 @@ import Button from "@mui/material/Button";
                         
                       }}
                     >
-                      <h1>บันทึกการชำระเงิน</h1>
+                      <h1>เพิ่มข้อมูลยา</h1>
       
                     </Typography>
                   </Box>
@@ -65,156 +87,85 @@ import Button from "@mui/material/Button";
                 <Divider />
                 <Grid container spacing={3} sx={{ flexGrow: 1 }}>
       
-      
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <FormControl fullWidth variant="outlined">
-                      <p>ชื่อ - นามสกุล</p>
+                      <p>รหัสยา</p>
+                      <TextField
+                        // variant="outlined"
+                        id="drugCode"
+                        name="drugCode"
+                        placeholder="Drug code"
+                        value={drugCode}
+                        onChange={(e) => {setDrugCode(e.target.value)}}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={4}>
+                    <FormControl fullWidth variant="outlined">
+                      <p>ชื่อยา</p>
+                      <TextField
+                        // variant="outlined"
+                        id="drugName"
+                        name="drugName"
+                        placeholder="Drug name"
+                        value={drugName}
+                        onChange={(e) => {setDrugName(e.target.value)}}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={4}>
+                    <FormControl fullWidth variant="outlined">
+                      <p>หน่วยสินค้า</p>
                       <Select
                         native
-                        disabled
-                        value={[]}
-                        onChange={() => {}}
-                        inputProps={{
-                          name: "UserID",
-                        }}
-                      >
-                        <option value={[]} key={0} >
-                          {/* {users?.Name} */}
-                        </option>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-      
-      
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>เลขห้อง</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-      
-                    </FormControl>
-                  </Grid>
-      
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ค่าห้องพัก</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-                    </FormControl>
-                  </Grid>
-      
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ค่าน้ำ</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-                    </FormControl>
-                  </Grid>
-      
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ค่าไฟ</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-                    </FormControl>
-                  </Grid>
-      
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ค่าเฟอร์นิเจอร์</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-                    </FormControl>
-                  </Grid>
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ยอดรวมชำระ</p>
-                      <TextField
-                        variant="outlined"
-                        disabled
-                        id="BillID"
-                        inputProps={{
-                          name: "BillID",
-                        }}
-      
-                        value={[]}
-                      />
-                    </FormControl>
-                  </Grid>
-      
-      
-      
-                  <Grid item xs={6} sx={{ mt: 'auto', }}>
-                    <FormControl fullWidth variant="outlined">
-                      <p>ช่องทางการชำระ</p>
-                      <Select
-                        native
-                        value={[]}
-                        onChange={() => {}}
-                        inputProps={{
-                          name: "MethodID",
-                        }}
+                        value={drugUnit}
+                        onChange={(e) => {setDrugUnit(e.target.value)}}
+                        name="unit"
+                        placeholder="--กรุณาเลือก--"
                       >
                         <option aria-label="None" value="">
-                          เลือก...
+                          --กรุณาเลือก--
                         </option>
-                        {/* {methods.map((item: MethodInterface) => (
-                          <option value={item.ID} key={item.ID}>
-                            {item.Name}
+                        {unit.map((item, index) => (
+                          <option value={item.id} key={index}>
+                            {item.label}
                           </option>
-                        ))} */}
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
+
+                  <Grid item xs={4}>
+                    <FormControl fullWidth variant="outlined">
+                      <p>จำนวนสินค้า</p>
+                      <TextField
+                        // variant="outlined"
+                        id="amount"
+                        name="amount"
+                        placeholder="Amount"
+                        inputMode="numeric"
+                        value={amount}
+                        onChange={(e) => {setAmount(e.target.value)}}
+                      />
+                    </FormControl>
+                  </Grid>
       
-      
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
+                    <FormControl fullWidth variant="outlined">
+                      <p>ราคา</p>
+                      <TextField
+                        // variant="outlined"
+                        id="price"
+                        name="price"
+                        placeholder="Price"
+                        value={price}
+                        onChange={(e) => {setPrice(e.target.value)}}
+                      />
+                    </FormControl>
+                  </Grid>
+                  {/* <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                       <p>ธนาคาร</p>
                       <Select
@@ -228,14 +179,14 @@ import Button from "@mui/material/Button";
                         <option aria-label="None" value="">
                           เลือก...
                         </option>
-                        {/* {bankings.map((item: BankingInterface) => (
+                        {bankings.map((item: BankingInterface) => (
                           <option value={item.ID} key={item.ID}>
                             {item.Name}
                           </option>
-                        ))} */}
+                        ))}
                       </Select>
                     </FormControl>
-                  </Grid>
+                  </Grid> */}
       
       
                   {/* <Grid item xs={6}>
@@ -253,29 +204,17 @@ import Button from "@mui/material/Button";
                     </FormControl>
                   </Grid> */}
       
-      
-                  <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                      <Button variant="contained" component="label">
-                        Upload
-                        <input hidden accept="image/*" multiple type="file" onChange={() => {}} />
-                      </Button>
-                    </FormControl>
-                  </Grid>
-      
-                  <Grid item xs={12}>
+                  <Grid item xs={12} style={{"textAlign": "right"}}>
                     <Button
                     //   component={RouterLink}
                     //   to="/payments"
-                    //   variant="contained"
+                      variant="outlined"
                     >
                       กลับ
                     </Button>
                     <Button
-                    //   style={{ float: "right" }}
-                    //   variant="contained"
-                    //   onClick={[]}
-                    //   color="primary"
+                      onClick={submit}
+                      variant="outlined"
                     >
                       บันทึกข้อมูล
                     </Button>
